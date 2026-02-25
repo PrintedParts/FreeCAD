@@ -1,0 +1,2 @@
+#!/bin/zsh
+exec "/Users/jonathan/dev/vehicad/.pixi/envs/default/bin/FreeCAD" "$@"
