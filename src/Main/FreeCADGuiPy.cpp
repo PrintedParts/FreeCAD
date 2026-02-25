@@ -34,6 +34,7 @@
 #endif
 
 #include <QApplication>
+#include "Gui/UrlSchemeHandler.h"
 #include <QIcon>
 #if defined(Q_OS_WIN)
 # include <windows.h>
@@ -68,9 +69,24 @@ class QtApplication: public QApplication
 public:
     QtApplication(int& argc, char** argv)
         : QApplication(argc, argv)
-    {}
+    {
+        // PrintedParts: URL scheme handler
+        static UrlSchemeHandler* pp_schemeHandler = nullptr;
+        if (!pp_schemeHandler) {
+            pp_schemeHandler = new UrlSchemeHandler(this);
+            this->installEventFilter(pp_schemeHandler);
+        }
+}
     bool notify(QObject* receiver, QEvent* event) override
     {
+        // PrintedParts: ensure UrlSchemeHandler installed
+        static bool pp_installed = false;
+        if (!pp_installed) {
+            pp_installed = true;
+            auto* h = new UrlSchemeHandler(this);
+            this->installEventFilter(h);
+        }
+
         try {
             return QApplication::notify(receiver, event);
         }
@@ -120,6 +136,13 @@ static PyObject* FreeCADGui_showMainWindow(PyObject* /*self*/, PyObject* args)
                 // of a QObject. Otherwise the application lives in a different thread than the
                 // main thread which will cause hazardous behaviour.
                 QtApplication app(argc, argv);
+    // PrintedParts: install UrlSchemeHandler after QtApplication app
+    static UrlSchemeHandler* pp_schemeHandler = nullptr;
+    if (!pp_schemeHandler) {
+        pp_schemeHandler = new UrlSchemeHandler(&app);
+        app.installEventFilter(pp_schemeHandler);
+    }
+
                 if (setupMainWindow()) {
                     app.exec();
                 }
