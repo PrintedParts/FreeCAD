@@ -1,5 +1,12 @@
 add_library(FreeCADGui SHARED)
 
+### PrintedParts FORCE UrlSchemeHandler into FreeCADGui
+# CMake source lists in this file are complex; force-add our file to the actual target.
+target_sources(FreeCADGui PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/UrlSchemeHandler.cpp
+)
+
+
 if ( EXISTS "${CMAKE_SOURCE_DIR}/src/3rdParty/GSL/include" )
     include_directories( ${CMAKE_SOURCE_DIR}/src/3rdParty/GSL/include )
 else()
@@ -1549,7 +1556,12 @@ if (EIGEN3_NO_DEPRECATED_COPY)
         PROPERTIES COMPILE_FLAGS ${EIGEN3_NO_DEPRECATED_COPY})
 endif ()
 
-target_sources(FreeCADGui PRIVATE ${FreeCADGui_SRCS})
+target_sources(FreeCADGui PRIVATE ${FreeCADGui_SRCS}
+    OAuthLoginDialog.cpp
+    OAuthLoginDialog.h
+    UrlSchemeHandler.cpp
+    UrlSchemeHandler.h
+)
 target_link_libraries(FreeCADGui PUBLIC ${FreeCADGui_LIBS})
 
 if (MSVC)
@@ -1618,3 +1630,13 @@ INSTALL(
     DESTINATION
         ${CMAKE_INSTALL_DATADIR}/3Dconnexion
 )
+
+
+### PrintedParts OAuth URL handler (added by script)
+# Force-include our files in the FreeCADGui target regardless of how upstream organizes source lists.
+if(TARGET FreeCADGui)
+  target_sources(FreeCADGui PRIVATE
+    UrlSchemeHandler.cpp
+    UrlSchemeHandler.h
+  )
+endif()

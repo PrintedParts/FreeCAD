@@ -54,6 +54,7 @@
 #include <QWhatsThis>
 #include <QWindow>
 #include <QPushButton>
+#include "OAuthLoginDialog.h"
 
 
 #if defined(Q_OS_WIN)
@@ -336,6 +337,22 @@ struct MainWindowP
 MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f)
     : QMainWindow(parent, f /*WDestructiveClose*/)
 {
+    // ---- PrintedParts OAuth (stub) ----
+    QMenu* ppMenu = nullptr;
+    for (auto* a : menuBar()->actions()) {
+        if (a && a->text().contains("PrintedParts")) { ppMenu = a->menu(); break; }
+    }
+    if (!ppMenu) ppMenu = menuBar()->addMenu(tr("PrintedParts"));
+
+    QAction* actSignIn = new QAction(tr("Sign in…"), this);
+    connect(actSignIn, &QAction::triggered, this, [this]() {
+        const QString url = QStringLiteral("https://example.com/oauth/start"); // TODO: replace
+        Gui::OAuthLoginDialog dlg(url, this);
+        dlg.exec();
+    });
+    ppMenu->addAction(actSignIn);
+    // -------------------------------
+
     d = new MainWindowP;
     d->splashscreen = nullptr;
     d->activeView = nullptr;

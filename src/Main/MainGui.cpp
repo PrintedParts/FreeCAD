@@ -40,6 +40,9 @@
 #include <stdexcept>
 
 #include <QApplication>
+#include "Gui/UrlSchemeHandler.h"
+#include <QCoreApplication>
+#include <QGuiApplication>
 #include <QLocale>
 #include <QMessageBox>
 
@@ -188,7 +191,9 @@ int main(int argc, char** argv)
 #endif
 
     // Name and Version of the Application
-    App::Application::Config()["ExeName"] = "FreeCAD";
+    App::Application::Config()["ExeName"] = "PrintedParts";
+QCoreApplication::setApplicationName(QStringLiteral("PrintedParts"));
+QGuiApplication::setApplicationDisplayName(QStringLiteral("PrintedParts"));
     App::Application::Config()["ExeVendor"] = "FreeCAD";
     App::Application::Config()["AppDataSkipVendor"] = "true";
     App::Application::Config()["MaintainerUrl"] = "https://freecad.org";
@@ -254,6 +259,12 @@ int main(int argc, char** argv)
     }
     catch (const Base::UnknownProgramOption& e) {
         QApplication app(argc, argv);
+
+    // PrintedParts: catch printedparts://oauth/callback?code=...
+    {
+        auto* schemeHandler = new UrlSchemeHandler(qApp);
+        qApp->installEventFilter(schemeHandler);
+    }
         QString msg = QString::fromLatin1(e.what());
         displayCritical(msg);
         exit(1);
