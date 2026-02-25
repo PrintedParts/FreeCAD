@@ -147,6 +147,7 @@ sed = "*"
 ## macOS Dependencies (Apple Silicon)
 [target.osx-arm64.dependencies]
 sed = "*"
+ninja = ">=1.13.2,<2"
 
 [target.win-64.dependencies]
 pthreads-win32 = "*"
