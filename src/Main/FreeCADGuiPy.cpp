@@ -71,9 +71,9 @@ public:
         : QApplication(argc, argv)
     {
         // PrintedParts: URL scheme handler
-        static UrlSchemeHandler* pp_schemeHandler = nullptr;
+        static Gui::UrlSchemeHandler* pp_schemeHandler = nullptr;
         if (!pp_schemeHandler) {
-            pp_schemeHandler = new UrlSchemeHandler(this);
+            pp_schemeHandler = new Gui::UrlSchemeHandler(this);
             this->installEventFilter(pp_schemeHandler);
         }
 }
@@ -83,7 +83,7 @@ public:
         static bool pp_installed = false;
         if (!pp_installed) {
             pp_installed = true;
-            auto* h = new UrlSchemeHandler(this);
+            auto* h = new Gui::UrlSchemeHandler(this);
             this->installEventFilter(h);
         }
 
@@ -137,9 +137,9 @@ static PyObject* FreeCADGui_showMainWindow(PyObject* /*self*/, PyObject* args)
                 // main thread which will cause hazardous behaviour.
                 QtApplication app(argc, argv);
     // PrintedParts: install UrlSchemeHandler after QtApplication app
-    static UrlSchemeHandler* pp_schemeHandler = nullptr;
+    static Gui::UrlSchemeHandler* pp_schemeHandler = nullptr;
     if (!pp_schemeHandler) {
-        pp_schemeHandler = new UrlSchemeHandler(&app);
+        pp_schemeHandler = new Gui::UrlSchemeHandler(&app);
         app.installEventFilter(pp_schemeHandler);
     }
 

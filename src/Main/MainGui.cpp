@@ -262,7 +262,7 @@ QGuiApplication::setApplicationDisplayName(QStringLiteral("PrintedParts"));
 
     // PrintedParts: catch printedparts://oauth/callback?code=...
     {
-        auto* schemeHandler = new UrlSchemeHandler(qApp);
+        auto* schemeHandler = new Gui::UrlSchemeHandler(qApp);
         qApp->installEventFilter(schemeHandler);
     }
         QString msg = QString::fromLatin1(e.what());
